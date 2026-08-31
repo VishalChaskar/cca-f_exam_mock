@@ -33,6 +33,12 @@
     height: 100%;
     z-index: -1;
     pointer-events: none;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0.85) 100%),
+      url('MountFiji.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   html {
@@ -537,88 +543,7 @@
 </head>
 <body>
 
-<svg class="bg-wallpaper" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-  <defs>
-    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#cfe4f2"/>
-      <stop offset="45%" stop-color="#eaf1f4"/>
-      <stop offset="72%" stop-color="#f7e6dd"/>
-      <stop offset="100%" stop-color="#f3d9d0"/>
-    </linearGradient>
-    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffe9c7" stop-opacity="0.65"/>
-      <stop offset="100%" stop-color="#ffe9c7" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="washGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
-      <stop offset="35%" stop-color="#ffffff" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
-    <filter id="wc" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="10"/>
-    </filter>
-    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="9"/>
-    </filter>
-  </defs>
-
-  <rect width="1600" height="900" fill="url(#skyGrad)"/>
-  <circle cx="1150" cy="230" r="240" fill="url(#sunGlow)" filter="url(#soft)"/>
-
-  <path d="M0,680 C250,630 500,600 800,630 C1100,655 1350,620 1600,660 L1600,780 L0,780 Z"
-        fill="#b7c6da" opacity="0.35" filter="url(#soft)"/>
-  <path d="M0,720 C300,690 550,670 800,700 C1050,725 1300,700 1600,730 L1600,780 L0,780 Z"
-        fill="#9fb0c7" opacity="0.45" filter="url(#soft)"/>
-
-  <path d="M785,195 L815,195 Q900,330 1000,560 Q1140,650 1250,780
-           L350,780 Q460,650 600,560 Q700,330 785,195 Z"
-        fill="#7c93ad" filter="url(#wc)"/>
-
-  <path d="M785,195 L815,195 C837,215 848,240 852,258 L828,290 L846,312 L800,330
-           L754,312 L772,290 L748,258 C752,240 763,215 785,195 Z"
-        fill="#f1f7fb" opacity="0.95" filter="url(#wc)"/>
-  <path d="M872,300 L953,460 L968,462 L890,302 Z" fill="#f1f7fb" opacity="0.85" filter="url(#wc)"/>
-  <path d="M728,300 L647,460 L632,462 L710,302 Z" fill="#f1f7fb" opacity="0.85" filter="url(#wc)"/>
-
-  <ellipse cx="800" cy="740" rx="900" ry="40" fill="#ffffff" opacity="0.55" filter="url(#soft)"/>
-  <ellipse cx="500" cy="770" rx="700" ry="30" fill="#ffffff" opacity="0.45" filter="url(#soft)"/>
-  <ellipse cx="1100" cy="780" rx="750" ry="35" fill="#ffffff" opacity="0.5" filter="url(#soft)"/>
-
-  <g fill="#33475a" opacity="0.8">
-    <polygon points="130,790 85,870 175,870"/>
-    <polygon points="130,760 100,810 160,810"/>
-    <rect x="122" y="868" width="16" height="25"/>
-    <polygon points="230,780 175,880 285,880"/>
-    <polygon points="230,745 195,800 265,800"/>
-    <rect x="222" y="878" width="16" height="25"/>
-    <polygon points="1460,790 1405,880 1515,880"/>
-    <polygon points="1460,755 1425,808 1495,808"/>
-    <rect x="1452" y="878" width="16" height="25"/>
-    <polygon points="1530,810 1495,880 1565,880"/>
-    <polygon points="1530,782 1508,818 1552,818"/>
-    <rect x="1522" y="878" width="14" height="22"/>
-  </g>
-
-  <g fill="#8a4a42" opacity="0.75">
-    <rect x="1330" y="800" width="16" height="90"/>
-    <rect x="1400" y="800" width="16" height="90"/>
-    <rect x="1315" y="795" width="116" height="16"/>
-    <rect x="1322" y="818" width="102" height="10"/>
-  </g>
-
-  <g opacity="0.55">
-    <path d="M40,40 C90,70 130,95 190,150" fill="none" stroke="#6b4a3a" stroke-width="3"/>
-    <circle cx="95" cy="72" r="9" fill="#f3c6d6"/>
-    <circle cx="118" cy="86" r="7" fill="#f3c6d6"/>
-    <circle cx="140" cy="102" r="9" fill="#f6d3de"/>
-    <circle cx="160" cy="120" r="6" fill="#f3c6d6"/>
-    <circle cx="178" cy="138" r="8" fill="#f6d3de"/>
-    <circle cx="70" cy="58" r="6" fill="#f6d3de"/>
-  </g>
-
-  <rect width="1600" height="900" fill="url(#washGrad)"/>
-</svg>
+<div class="bg-wallpaper" aria-hidden="true"></div>
 
 <div id="app">
 

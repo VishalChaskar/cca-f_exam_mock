@@ -1,6 +1,6 @@
 # CCA Foundation Exam Quiz
 
-A dark-themed practice quiz for the CCA Foundation exam. Single-page, no build step, no frameworks.
+A light, Apple.com-styled practice quiz for the CCA Foundation exam, with a Mount Fuji wallpaper background. Single-page, no build step, no frameworks.
 
 ## Files
 
@@ -8,6 +8,7 @@ A dark-themed practice quiz for the CCA Foundation exam. Single-page, no build s
 |---|---|
 | `index.html` | Complete app — markup, styles, and logic in one file |
 | `ccaf_questions_consolidated.json` | Question bank, loaded at runtime |
+| `MountFiji.png` | Background wallpaper image, referenced by `index.html` |
 | `README.md` | This file |
 
 ## Running locally
