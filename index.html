@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA Foundation Exam Quiz</title>
+<meta name="description" content="Practice quiz for the CCA Foundation exam.">
+<style>
+  :root {
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --border: rgba(255,255,255,0.12);
+    --text: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --accent: #2997ff;
+    --accent-hover: #0077ed;
+    --success: #30d158;
+    --success-bg: rgba(48,209,88,0.12);
+    --danger: #ff453a;
+    --danger-bg: rgba(255,69,58,0.12);
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-pill: 980px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+      "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen {
+    display: none;
+    flex: 1;
+    width: 100%;
+  }
+
+  .screen.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wrap {
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  a, button {
+    font-family: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: inherit;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    border-radius: var(--radius-pill);
+    font-size: 17px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: #3a3a3c;
+  }
+
+  .btn-text {
+    color: var(--accent);
+    padding: 14px 8px;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .btn-text:hover:not(:disabled) {
+    color: var(--accent-hover);
+  }
+
+  /* ---------- Loading / Error ---------- */
+
+  #screen-loading, #screen-error {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100vh;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid var(--surface-2);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .error-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  #error-detail {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 8px 0 24px;
+    max-width: 420px;
+  }
+
+  /* ---------- Landing ---------- */
+
+  #screen-landing {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: clamp(34px, 6vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin: 0 0 16px;
+  }
+
+  .hero-subtitle {
+    font-size: 19px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 0 8px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .question-count {
+    font-size: 17px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .question-count strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ---------- Quiz ---------- */
+
+  #screen-quiz {
+    justify-content: flex-start;
+  }
+
+  .quiz-header {
+    padding: 20px 24px 0;
+  }
+
+  .quiz-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  .quiz-stats .stat-strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: var(--radius-pill);
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .question-card {
+    padding: 32px 24px 24px;
+  }
+
+  .question-text {
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    margin: 0 0 28px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--text);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(41,151,255,0.1);
+  }
+
+  .option-badge {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .option-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .option-mark {
+    flex: 0 0 auto;
+    margin-left: auto;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .option.correct .option-mark { color: var(--success); }
+  .option.incorrect .option-mark { color: var(--danger); }
+
+  .option.selected .option-badge {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .option:disabled {
+    cursor: default;
+  }
+
+  .option.correct {
+    border-color: var(--success);
+    background: var(--success-bg);
+  }
+
+  .option.correct .option-badge {
+    background: var(--success);
+    color: #06280f;
+  }
+
+  .option.incorrect {
+    border-color: var(--danger);
+    background: var(--danger-bg);
+  }
+
+  .option.incorrect .option-badge {
+    background: var(--danger);
+    color: #2d0906;
+  }
+
+  .explanation {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    display: none;
+  }
+
+  .explanation.visible {
+    display: block;
+  }
+
+  .explanation.state-correct {
+    border-left-color: var(--success);
+  }
+
+  .explanation.state-incorrect {
+    border-left-color: var(--danger);
+  }
+
+  .explanation-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  .explanation.state-correct .explanation-label { color: var(--success); }
+  .explanation.state-incorrect .explanation-label { color: var(--danger); }
+
+  .explanation-text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .quiz-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 24px 32px;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+  }
+
+  .quiz-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ---------- Results ---------- */
+
+  #screen-results {
+    align-items: center;
+    text-align: center;
+  }
+
+  .results-wrap {
+    padding-top: 48px;
+  }
+
+  .score-percent {
+    font-size: 72px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .score-fraction {
+    font-size: 19px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .results-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 44px;
+    flex-wrap: wrap;
+  }
+
+  .review-section {
+    text-align: left;
+  }
+
+  .review-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .review-empty {
+    color: var(--text-secondary);
+    font-size: 15px;
+    padding: 20px 0;
+  }
+
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .review-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    transition: border-color 0.15s ease;
+  }
+
+  .review-item:hover {
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .review-dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    margin-top: 7px;
+  }
+
+  .review-item-body {
+    flex: 1;
+  }
+
+  .review-item-num {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+
+  .review-item-text {
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .review-back {
+    padding: 20px 24px 32px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 18px; }
+    .score-percent { font-size: 56px; }
+    .quiz-nav { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div id="screen-loading" class="screen active">
+    <div>
+      <div class="spinner"></div>
+      <div style="color: var(--text-secondary); font-size: 15px;">Loading questions&hellip;</div>
+    </div>
+  </div>
+
+  <div id="screen-error" class="screen">
+    <div class="wrap">
+      <div class="error-icon">&#9888;&#65039;</div>
+      <h2 style="margin: 0 0 4px;">Couldn't load questions</h2>
+      <p id="error-detail"></p>
+      <button class="btn btn-primary" id="btn-retry">Try Again</button>
+    </div>
+  </div>
+
+  <div id="screen-landing" class="screen">
+    <div class="wrap">
+      <div class="eyebrow">Practice Exam</div>
+      <h1 class="hero-title">CCA Foundation<br>Exam Quiz</h1>
+      <p class="hero-subtitle">Test your knowledge with real practice questions before exam day.</p>
+      <div class="question-count"><strong id="landing-count">0</strong> questions available</div>
+      <button class="btn btn-primary" id="btn-start" style="font-size: 19px; padding: 16px 40px;">Start Quiz</button>
+    </div>
+  </div>
+
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header wrap" style="padding-left: 24px; padding-right: 24px;">
+      <div class="quiz-stats">
+        <span>Question <span class="stat-strong" id="stat-current">1</span> / <span id="stat-total">0</span></span>
+        <span><span class="stat-strong" id="stat-answered">0</span> answered</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div class="question-card wrap">
+      <p class="question-text" id="question-text"></p>
+      <div class="options-list" id="options-list"></div>
+      <div class="explanation" id="explanation">
+        <div class="explanation-label" id="explanation-label"></div>
+        <p class="explanation-text" id="explanation-text"></p>
+      </div>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="btn btn-secondary" id="btn-prev">Previous</button>
+      <div class="quiz-nav-right">
+        <button class="btn btn-text" id="btn-view-results" style="display: none;">View Results</button>
+        <button class="btn btn-primary" id="btn-submit" disabled>Submit</button>
+        <button class="btn btn-primary" id="btn-next" style="display: none;">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-results" class="screen">
+    <div class="wrap results-wrap">
+      <div class="score-percent" id="results-percent">0%</div>
+      <div class="score-fraction" id="results-fraction">0 / 0 correct</div>
+      <div class="results-actions">
+        <button class="btn btn-primary" id="btn-restart">Restart Quiz</button>
+      </div>
+      <div class="review-section">
+        <div class="review-title">Review Missed Questions</div>
+        <div class="review-list" id="review-list"></div>
+        <div class="review-empty" id="review-empty" style="display: none;">Perfect score &mdash; nothing to review.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-back wrap" id="review-back-bar" style="display: none;">
+    <button class="btn btn-secondary" id="btn-back-to-results">&larr; Back to Results</button>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'ccaf_questions_consolidated.json';
+
+  var state = {
+    questions: [],
+    currentIndex: 0,
+    answers: [],
+    reviewMode: false
+  };
+
+  var el = {};
+  [
+    'screen-loading', 'screen-error', 'screen-landing', 'screen-quiz', 'screen-results',
+    'error-detail', 'btn-retry', 'landing-count', 'btn-start',
+    'stat-current', 'stat-total', 'stat-answered', 'progress-fill',
+    'question-text', 'options-list', 'explanation', 'explanation-label', 'explanation-text',
+    'btn-prev', 'btn-submit', 'btn-next', 'btn-view-results',
+    'results-percent', 'results-fraction', 'review-list', 'review-empty', 'btn-restart',
+    'review-back-bar', 'btn-back-to-results'
+  ].forEach(function (id) { el[id] = document.getElementById(id); });
+
+  function showScreen(name) {
+    ['screen-loading', 'screen-error', 'screen-landing', 'screen-quiz', 'screen-results'].forEach(function (id) {
+      el[id].classList.toggle('active', id === name);
+    });
+  }
+
+  function firstDefined() {
+    for (var i = 0; i < arguments.length; i++) {
+      if (arguments[i] !== undefined && arguments[i] !== null) return arguments[i];
+    }
+    return undefined;
+  }
+
+  function letterToIndex(letter) {
+    var c = String(letter).trim().toUpperCase().charCodeAt(0);
+    return c - 65;
+  }
+
+  function normalizeQuestion(raw, idx) {
+    if (!raw || typeof raw !== 'object') return null;
+
+    var questionText = firstDefined(raw.question, raw.questionText, raw.text, raw.prompt, raw.title);
+    var rawOptions = firstDefined(raw.options, raw.choices, raw.answers, raw.answerOptions);
+
+    if (typeof questionText !== 'string' || !questionText.trim()) return null;
+    if (!Array.isArray(rawOptions) || rawOptions.length < 2) return null;
+
+    var options = rawOptions.map(function (o) {
+      if (typeof o === 'string') return o;
+      if (o && typeof o === 'object') return firstDefined(o.text, o.label, o.value, o.option) || String(o);
+      return String(o);
+    });
+
+    var rawCorrect = firstDefined(
+      raw.correctAnswer, raw.correct_answer, raw.correctIndex, raw.answerIndex,
+      raw.correct, raw.answer
+    );
+
+    var correctIndex = -1;
+    if (typeof rawCorrect === 'number' && !isNaN(rawCorrect)) {
+      correctIndex = rawCorrect;
+      console.warn('Question ' + (idx + 1) + ': numeric correctAnswer (' + rawCorrect + ') assumed 0-based index.');
+    } else if (typeof rawCorrect === 'string') {
+      var trimmed = rawCorrect.trim();
+      if (/^[A-Da-d]$/.test(trimmed)) {
+        correctIndex = letterToIndex(trimmed);
+      } else if (/^\d+$/.test(trimmed)) {
+        correctIndex = parseInt(trimmed, 10);
+        console.warn('Question ' + (idx + 1) + ': numeric-string correctAnswer ("' + trimmed + '") assumed 0-based index.');
+      } else {
+        correctIndex = options.findIndex(function (opt) {
+          return String(opt).trim().toLowerCase() === trimmed.toLowerCase();
+        });
+      }
+    }
+
+    if (correctIndex < 0 || correctIndex >= options.length) return null;
+
+    var explanation = firstDefined(raw.explanation, raw.rationale, raw.explain, raw.reason, raw.description) || '';
+
+    return {
+      id: firstDefined(raw.id, idx + 1),
+      question: questionText,
+      options: options,
+      correctIndex: correctIndex,
+      explanation: explanation
+    };
+  }
+
+  function loadQuestions() {
+    showScreen('screen-loading');
+    fetch(DATA_URL, { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Server responded with ' + res.status + ' ' + res.statusText);
+        return res.json();
+      })
+      .then(function (data) {
+        var list = Array.isArray(data) ? data : (data && Array.isArray(data.questions) ? data.questions : null);
+        if (!list) throw new Error('Expected a JSON array of questions (or a { "questions": [...] } object).');
+
+        var normalized = list.map(function (raw, idx) {
+          var q = normalizeQuestion(raw, idx);
+          if (!q) console.warn('Skipping invalid question at index ' + idx + ':', raw);
+          return q;
+        }).filter(Boolean);
+        if (normalized.length === 0) throw new Error('No valid questions found in ' + DATA_URL + '.');
+
+        state.questions = normalized;
+        state.answers = new Array(normalized.length).fill(null);
+        el['landing-count'].textContent = normalized.length;
+        showScreen('screen-landing');
+      })
+      .catch(function (err) {
+        el['error-detail'].textContent = err.message || String(err);
+        showScreen('screen-error');
+      });
+  }
+
+  function answeredCount() {
+    return state.answers.filter(function (a) { return a !== null; }).length;
+  }
+
+  function scoreCount() {
+    return state.answers.filter(function (a) { return a && a.correct; }).length;
+  }
+
+  function renderQuestion() {
+    var idx = state.currentIndex;
+    var q = state.questions[idx];
+    var total = state.questions.length;
+    var existing = state.answers[idx];
+
+    el['stat-current'].textContent = idx + 1;
+    el['stat-total'].textContent = total;
+    el['stat-answered'].textContent = answeredCount();
+    el['progress-fill'].style.width = (answeredCount() / total * 100) + '%';
+
+    el['question-text'].textContent = q.question;
+
+    el['options-list'].innerHTML = '';
+    q.options.forEach(function (optionText, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'option';
+      btn.dataset.index = i;
+
+      var badge = document.createElement('span');
+      badge.className = 'option-badge';
+      badge.textContent = String.fromCharCode(65 + i);
+
+      var label = document.createElement('span');
+      label.className = 'option-label';
+      label.textContent = optionText;
+
+      btn.appendChild(badge);
+      btn.appendChild(label);
+      btn.addEventListener('click', function () { onSelectOption(i); });
+      el['options-list'].appendChild(btn);
+    });
+
+    if (existing) {
+      lockOptions(existing.selectedIndex);
+      showExplanation(existing.correct);
+    } else {
+      el['explanation'].classList.remove('visible');
+      el['btn-submit'].disabled = true;
+    }
+
+    var allAnswered = answeredCount() === total;
+
+    if (state.reviewMode) {
+      el['btn-prev'].disabled = true;
+      el['btn-view-results'].style.display = 'none';
+      el['btn-submit'].style.display = 'none';
+      el['btn-next'].style.display = 'none';
+      el['review-back-bar'].style.display = 'block';
+    } else {
+      el['btn-prev'].disabled = idx === 0;
+      el['btn-view-results'].style.display = allAnswered ? 'inline-flex' : 'none';
+      el['review-back-bar'].style.display = 'none';
+      if (existing) {
+        el['btn-submit'].style.display = 'none';
+        el['btn-next'].style.display = 'inline-flex';
+        el['btn-next'].textContent = (idx === total - 1) ? 'Finish' : 'Next';
+      } else {
+        el['btn-submit'].style.display = 'inline-flex';
+        el['btn-next'].style.display = 'none';
+      }
+    }
+
+    restoreFocusIfLost();
+  }
+
+  function restoreFocusIfLost() {
+    if (document.activeElement && document.activeElement !== document.body) return;
+    var candidates = Array.prototype.slice.call(el['options-list'].children);
+    candidates.push(el['btn-submit'], el['btn-next'], el['btn-prev'], el['btn-view-results'], el['btn-back-to-results']);
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      if (c && c.offsetParent !== null && !c.disabled) {
+        c.focus();
+        return;
+      }
+    }
+  }
+
+  function onSelectOption(i) {
+    if (state.answers[state.currentIndex]) return;
+    Array.prototype.forEach.call(el['options-list'].children, function (btn, idx) {
+      btn.classList.toggle('selected', idx === i);
+    });
+    el['btn-submit'].disabled = false;
+    el['btn-submit'].dataset.selected = i;
+  }
+
+  function lockOptions(selectedIndex) {
+    var q = state.questions[state.currentIndex];
+    Array.prototype.forEach.call(el['options-list'].children, function (btn, idx) {
+      btn.disabled = true;
+      btn.classList.remove('selected');
+      var oldMark = btn.querySelector('.option-mark');
+      if (oldMark) oldMark.remove();
+      if (idx === q.correctIndex) {
+        btn.classList.add('correct');
+        btn.appendChild(makeMark('✓'));
+      } else if (idx === selectedIndex) {
+        btn.classList.add('incorrect');
+        btn.appendChild(makeMark('✕'));
+      }
+    });
+  }
+
+  function makeMark(glyph) {
+    var mark = document.createElement('span');
+    mark.className = 'option-mark';
+    mark.setAttribute('aria-hidden', 'true');
+    mark.textContent = glyph;
+    return mark;
+  }
+
+  function showExplanation(isCorrect) {
+    var q = state.questions[state.currentIndex];
+    el['explanation'].classList.add('visible');
+    el['explanation'].classList.toggle('state-correct', isCorrect);
+    el['explanation'].classList.toggle('state-incorrect', !isCorrect);
+    el['explanation-label'].textContent = isCorrect ? 'Correct' : 'Incorrect';
+    el['explanation-text'].textContent = q.explanation || 'No explanation provided.';
+  }
+
+  function onSubmit() {
+    var idx = state.currentIndex;
+    var selected = parseInt(el['btn-submit'].dataset.selected, 10);
+    var q = state.questions[idx];
+    var correct = selected === q.correctIndex;
+
+    state.answers[idx] = { selectedIndex: selected, correct: correct };
+    lockOptions(selected);
+    showExplanation(correct);
+
+    el['stat-answered'].textContent = answeredCount();
+    el['progress-fill'].style.width = (answeredCount() / state.questions.length * 100) + '%';
+
+    el['btn-submit'].style.display = 'none';
+    el['btn-next'].style.display = 'inline-flex';
+    el['btn-next'].textContent = (idx === state.questions.length - 1) ? 'Finish' : 'Next';
+    el['btn-next'].focus();
+
+    if (answeredCount() === state.questions.length) {
+      el['btn-view-results'].style.display = 'inline-flex';
+    }
+  }
+
+  function onNext() {
+    var idx = state.currentIndex;
+    var isLast = idx === state.questions.length - 1;
+    var allAnswered = answeredCount() === state.questions.length;
+
+    if (isLast && allAnswered) {
+      renderResults();
+      return;
+    }
+    if (idx < state.questions.length - 1) {
+      state.currentIndex++;
+      renderQuestion();
+    }
+  }
+
+  function onPrev() {
+    if (state.currentIndex > 0) {
+      state.currentIndex--;
+      renderQuestion();
+    }
+  }
+
+  function renderResults() {
+    state.reviewMode = false;
+    el['review-back-bar'].style.display = 'none';
+    var total = state.questions.length;
+    var correct = scoreCount();
+    var pct = Math.round((correct / total) * 100);
+
+    el['results-percent'].textContent = pct + '%';
+    el['results-fraction'].textContent = correct + ' / ' + total + ' correct';
+
+    var missed = [];
+    state.answers.forEach(function (a, i) {
+      if (a && !a.correct) missed.push(i);
+    });
+
+    el['review-list'].innerHTML = '';
+    el['review-empty'].style.display = missed.length === 0 ? 'block' : 'none';
+
+    missed.forEach(function (i) {
+      var q = state.questions[i];
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'review-item';
+
+      var dot = document.createElement('span');
+      dot.className = 'review-dot';
+
+      var body = document.createElement('span');
+      body.className = 'review-item-body';
+
+      var num = document.createElement('div');
+      num.className = 'review-item-num';
+      num.textContent = 'Question ' + (i + 1);
+
+      var text = document.createElement('div');
+      text.className = 'review-item-text';
+      text.textContent = q.question;
+
+      body.appendChild(num);
+      body.appendChild(text);
+      row.appendChild(dot);
+      row.appendChild(body);
+
+      row.addEventListener('click', function () {
+        state.reviewMode = true;
+        state.currentIndex = i;
+        showScreen('screen-quiz');
+        renderQuestion();
+      });
+
+      el['review-list'].appendChild(row);
+    });
+
+    showScreen('screen-results');
+  }
+
+  function restartQuiz() {
+    state.currentIndex = 0;
+    state.answers = new Array(state.questions.length).fill(null);
+    state.reviewMode = false;
+    showScreen('screen-quiz');
+    renderQuestion();
+  }
+
+  el['btn-retry'].addEventListener('click', loadQuestions);
+  el['btn-start'].addEventListener('click', function () {
+    state.currentIndex = 0;
+    showScreen('screen-quiz');
+    renderQuestion();
+  });
+  el['btn-submit'].addEventListener('click', onSubmit);
+  el['btn-next'].addEventListener('click', onNext);
+  el['btn-prev'].addEventListener('click', onPrev);
+  el['btn-view-results'].addEventListener('click', renderResults);
+  el['btn-restart'].addEventListener('click', restartQuiz);
+  el['btn-back-to-results'].addEventListener('click', function () {
+    state.reviewMode = false;
+    renderResults();
+  });
+
+  loadQuestions();
+})();
+</script>
+
+</body>
+</html>
